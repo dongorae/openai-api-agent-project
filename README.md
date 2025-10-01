@@ -2,6 +2,15 @@
 
 본 자료는 [(주)에이아이캐슬](https://aicastle.com)에서 만든 [**OpenAI API로 배우는 Agent 개발 첫걸음** ](https://openai-api-agent.aicastle.school/)(OpenAI API Agent School) 강의 프로젝트 자료입니다.
 
+[![smithery badge](https://smithery.ai/badge/@dongorae/openai-api-agent-project)](https://smithery.ai/package/@dongorae/openai-api-agent-project)
+
+### Installing via Smithery
+
+To install openai-api-agent-project automatically via [Smithery](https://smithery.ai/package/@dongorae/openai-api-agent-project):
+
+```bash
+npx -y @smithery/cli install @dongorae/openai-api-agent-project
+```
 
 ## [0] Install & Build (uv)
 
