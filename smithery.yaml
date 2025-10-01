@@ -9,6 +9,7 @@ startCommand:
       command: 'uv',
       args: ['run', 'main.py'],
       env: {
+        PORT: '8081',
         # GOOGLE_CLIENT_ID: config.clientId || '',
         # GOOGLE_CLIENT_SECRET: config.clientSecret || '',
         # GOOGLE_REFRESH_TOKEN: config.refreshToken || ''
