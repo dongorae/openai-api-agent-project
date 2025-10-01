@@ -1,0 +1,37 @@
+name: openai-api-agent-project
+runtime: python
+entrypoint: main.py
+
+startCommand:
+  type: http
+  commandFunction: |
+    (config) => ({
+      command: 'uv',
+      args: ['run', 'main.py'],
+      env: {
+        # GOOGLE_CLIENT_ID: config.clientId || '',
+        # GOOGLE_CLIENT_SECRET: config.clientSecret || '',
+        # GOOGLE_REFRESH_TOKEN: config.refreshToken || ''
+      }
+    })
+  configSchema:
+    type: object
+    properties:
+      clientId:
+        type: string
+        title: "CLIENT_ID"
+        description: "Google Client ID"
+      clientSecret:
+        type: string
+        title: "CLIENT_SECRET"
+        description: "Google Client Secret"
+      refreshToken:
+        type: string
+        title: "REFRESH_TOKEN"
+        description: "Google Refresh Token"
+  #   required:
+  #     - clientId
+  #     - clientSecret
+  #     - refreshToken
+
+
