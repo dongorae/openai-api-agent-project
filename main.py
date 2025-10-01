@@ -48,15 +48,9 @@ async def health_check():
 ######################## MCP Server #############################
 #################################################################
 
-# MCP 요청 처리 (실제 MCP 통신)
-@app.api_route("/mcp", methods=["POST", "PUT", "DELETE", "PATCH"])
-async def mcp_handler(request: Request):
-    return await mcp_app(request.scope, request.receive, request._send)
-
-# MCP GET 요청 처리 (툴 목록 표시)
-@app.get("/mcp")
-async def mcp_get_handler(request: Request):
-    # return {"status": "ok"}
+# MCP 툴 목록 표시 (별도 경로)
+@app.get("/mcp-tools")
+async def mcp_tools_handler(request: Request):
     tools_list = [{"name": name, "description": (fn.__doc__ or "설명 없음").strip()} 
                   for name, fn in inspect.getmembers(tools, inspect.isfunction)]
     return templates.TemplateResponse("mcp.html", {"request": request, "tools": tools_list})
@@ -66,7 +60,7 @@ async def mcp_get_handler(request: Request):
 if PASSWORD := os.getenv("PASSWORD", ""):
     @app.middleware("http")
     async def mcp_auth_middleware(request: Request, call_next):
-        if request.url.path == "/mcp" :
+        if request.url.path.startswith("/mcp") :
             password_param = request.query_params.get("password")
             if not password_param or password_param != PASSWORD:
                 return JSONResponse({"error": "Unauthorized"}, status_code=401)
@@ -85,14 +79,18 @@ app.mount("/static", StaticFiles(directory="assets/static"), name="static")
 # 템플릿 설정
 templates = Jinja2Templates(directory="assets/templates")
 
-# CORS 설정
+# CORS 설정 - MCP 통신 지원
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allow_headers=["*"],
+    expose_headers=["*"],
 )
+
+# MCP 앱 마운트 (모든 미들웨어 설정 후)
+app.mount("/mcp", mcp_app)
 
 def apply_config_overrides(base_dict, override_dict):
     if not isinstance(override_dict, dict):
@@ -341,6 +339,7 @@ if __name__ == "__main__":
     print(f"🚀 Starting unified server on port {port}")
     print(f"🤖 Agent App: http://localhost:{port}/agent")
     print(f"🔧 MCP Server: http://localhost:{port}/mcp")
+    print(f"🛠️ MCP Tools: http://localhost:{port}/mcp-tools")
     
     uvicorn.run(
         "main:app",
